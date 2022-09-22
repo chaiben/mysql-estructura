@@ -146,9 +146,9 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
-#
-# DATA FOR: client
-#
+
+--- DATA FOR: client
+
 
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (1, 'Celia Hudson PhD', 'Miller Junction', '306', '6', '8', ' Castedefells', '23637', 'España', '(952)361-3717x5487', 'antonetta10@gmail.com', '2000-02-09 18:17:02', NULL);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (2, 'Dr. Kayla Lubowitz I', 'Sanford Stream', '50', '5', '5', ' Castedefells', '43338-8726', 'España', '05953137023', 'lesley97@gmail.com', '2009-04-04 00:56:46', NULL);
@@ -156,14 +156,14 @@ INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `c
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (4, 'Leonora Baumbach', 'Gregoria Estates', '125', '7', '1', ' Valencia', '20126', 'España', '(488)738-5680x8649', 'dorcas16@waelchi.com', '1993-10-29 02:00:17', NULL);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (5, 'Prof. Annabelle Pfannerstill', 'Sydni Inlet', '391', '', '7', 'Barcelona', '50213', 'España', '083-776-3172', 'glenna.fadel@hotmail.com', '1993-09-15 14:56:30', NULL);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (6, 'Esteban Kunze', 'Roberts Crossing', '459', '3', '', ' Castedefells', '78101', 'España', '1-789-268-6635x493', 'vschmeler@gottlieb.com', '1995-06-17 18:00:32', 1);
-INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (7, 'Evie O\'Kon', 'Rogers Knolls', '174', '8', '4', ' Castedefells', '55151', 'España', '(791)216-2729', 'twalter@thompson.net', '1972-03-23 01:46:36', 3);
+INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (7, 'Evie OKon', 'Rogers Knolls', '174', '8', '4', ' Castedefells', '55151', 'España', '(791)216-2729', 'twalter@thompson.net', '1972-03-23 01:46:36', 3);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (8, 'Carleton Murazik', 'Rebekah Street', '446', '9', '', ' Sitges', '25290', 'España', '516.675.1951', 'rozella.bins@kuhlman.org', '1978-05-06 19:46:51', 3);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (9, 'Mrs. Jazlyn Little', 'Cummings Route', '266', '5', '6', ' Hospitalet', '66831', 'España', '1-661-629-1896', 'clemens.bartoletti@bechtelar.com', '2006-02-28 17:45:10', 5);
 INSERT INTO `client` (`client_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`, `recomanat_client_id`) VALUES (10, 'Heath Cormier', 'Chester Skyway', '275', '9', '9', ' Hospitalet', '10539-1017', 'España', '007.899.0851', 'olowe@yahoo.com', '1989-05-30 23:08:24', 3);
 
-#
-# DATA FOR: proveidor
-#
+
+--- DATA FOR: proveidor
+
 
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (1, 'Gislason-Cruickshank', 'Zemlak Green', '437', '6', '2', 'North', '14771', 'España', '(725)247-7185', '926-676-9798x183', 'e03721990');
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (2, 'Rolfson, Brakus and Roberts', 'Purdy Burgs', '413', '2', '3', 'North', '23511-3518', 'España', '1-983-490-6259x23107', '(032)250-1503', 'i91995096');
@@ -173,9 +173,9 @@ INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `port
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (6, 'Sunglass', 'Leiva', '11', '', '9', 'Barcelona', '08014', 'España', '62147680233', '6519-0528', 'B02326432');
 
 
-#
-# DATA FOR: empleat
-#
+
+--- DATA FOR: empleat
+
 
 INSERT INTO `empleat` (`empleat_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`) VALUES (1, 'Raheem Sipes III', 'Hayes Mall', '50', '8', '3', 'North Juanita', '17226-4740', 'España', '623-736-148', 'sherwood51@gmail.com', '1974-07-18 05:27:35');
 INSERT INTO `empleat` (`empleat_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`) VALUES (2, 'Lila Emmerich', 'Alberto Trail', '40', '1', '', 'West Kiaraview', '68283', 'España', '613-003-552', 'gdickinson@heidenreich.info', '2015-12-11 09:57:04');
@@ -183,9 +183,9 @@ INSERT INTO `empleat` (`empleat_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, 
 INSERT INTO `empleat` (`empleat_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `correo_eletronic`, `data_registre`) VALUES (4, 'Dr. Rusty Wiza IV', 'Meagan Rue', '58', '4', '1', 'Luettgenport', '48929', 'España', '638-056-500', 'jacobi.arnold@hotmail.com', '2016-05-31 09:56:39');
 
 
-#
-# DATA FOR: marca
-#
+
+--- DATA FOR: marca
+
 
 INSERT INTO `marca` (`marca_id`, `marca_nom`, `proveidor_id`)
 VALUES (1, 'corrupti', 4),
@@ -214,9 +214,9 @@ VALUES (1, 'corrupti', 4),
        (24, 'nobis', 3),
        (25, 'dolores', 5);
 
-#
-# DATA FOR: ulleres
-#
+
+--- DATA FOR: ulleres
+
 
 INSERT INTO `ulleres`
 VALUES (1,5,24,5.6,0.7,135.19,'olive','pasta',' azul',' verde',1,'2020-02-20 21:36:50'),
@@ -240,7 +240,7 @@ VALUES (1,5,24,5.6,0.7,135.19,'olive','pasta',' azul',' verde',1,'2020-02-20 21:
        (19,2,11,5.8,2.9,98.4,'purple','metàllica',' rojo',' verde',4,'2021-01-31 05:02:21'),
        (20,9,6,1.4,2.4,124,'blue','pasta',' amarillo',' verde',3,'2020-12-06 09:43:10');
        
-#--- Llista el total de factures d'un client/a en un període determinat.
+--- Llista el total de factures d'un client/a en un període determinat.
 SELECT client_id, nom, preu, data_compra
 FROM client
 JOIN ulleres 
@@ -256,7 +256,7 @@ WHERE client_id = 5 AND
 data_compra BETWEEN '2020-01-01' AND '2020-06-30'
 GROUP BY client_id;
 
-#--- Llista els diferents models d'ulleres que ha venut un empleat/da durant un any.
+--- Llista els diferents models d'ulleres que ha venut un empleat/da durant un any.
 SELECT DISTINCT(marca_nom) AS marca, COUNT(marca_nom) AS 'cantidad venut'
 FROM ulleres
 JOIN empleat
@@ -268,7 +268,7 @@ YEAR(data_compra) = 2019
 GROUP BY marca_nom;
 
 
-#--- Llista els diferents proveïdors que han subministrat ulleres venudes amb èxit per l'òptica.
+--- Llista els diferents proveïdors que han subministrat ulleres venudes amb èxit per l'òptica.
 SELECT nom, ROUND(SUM(preu),2) AS 'Total Ventas', COUNT(ulleres_id) AS Num_ventas
 FROM proveidor
 LEFT JOIN marca USING (proveidor_id)
