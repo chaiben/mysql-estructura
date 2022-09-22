@@ -15,24 +15,13 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema pizzeria
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `pizzeria` DEFAULT CHARACTER SET utf8 ;
-USE `pizzeria` ;
-
--- -----------------------------------------------------
--- Table `pizzeria`.`marca`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`marca` (
-  `marca_id` INT NOT NULL AUTO_INCREMENT,
-  `marca_nom` VARCHAR(45) NOT NULL,
-  `proveidor_id` INT NOT NULL,
-  PRIMARY KEY (`marca_id`),
-  UNIQUE INDEX `marca_nom_UNIQUE` (`marca_nom` ASC) VISIBLE)
-ENGINE = InnoDB;
+USE `pizzeria`;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`client`
+-- Table `client`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`client` (
+CREATE TABLE IF NOT EXISTS `client` (
   `client_id` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(60) NOT NULL,
   `cognoms` VARCHAR(100) NOT NULL,
@@ -46,9 +35,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`botiga`
+-- Table `botiga`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`botiga` (
+CREATE TABLE IF NOT EXISTS `botiga` (
   `botiga_id` INT NOT NULL AUTO_INCREMENT,
   `adreca` VARCHAR(128) NOT NULL,
   `codi_postal` VARCHAR(10) NOT NULL,
@@ -59,30 +48,30 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`empleat`
+-- Table `empleat`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`empleat` (
+CREATE TABLE IF NOT EXISTS `empleat` (
   `empleat_id` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(60) NOT NULL,
   `cognoms` VARCHAR(100) NOT NULL,
   `nif` VARCHAR(20) NOT NULL,
   `telefon` VARCHAR(20) NOT NULL,
   `cargo` ENUM('cuiner', 'repartidor') NOT NULL,
-  `botiga_botiga_id` INT NOT NULL,
+  `botiga_id` INT NOT NULL,
   PRIMARY KEY (`empleat_id`),
-  INDEX `fk_empleat_botiga1_idx` (`botiga_botiga_id` ASC) VISIBLE,
+  INDEX `fk_empleat_botiga1_idx` (`botiga_id` ASC) VISIBLE,
   CONSTRAINT `fk_empleat_botiga1`
-    FOREIGN KEY (`botiga_botiga_id`)
-    REFERENCES `pizzeria`.`botiga` (`botiga_id`)
+    FOREIGN KEY (`botiga_id`)
+    REFERENCES `botiga` (`botiga_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`comanda`
+-- Table `comanda`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`comanda` (
+CREATE TABLE IF NOT EXISTS `comanda` (
   `comanda_id` INT NOT NULL AUTO_INCREMENT,
   `client_client_id` INT NOT NULL,
   `data_registre` DATETIME NOT NULL,
@@ -94,31 +83,31 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`comanda` (
   INDEX `fk_comanda_empleat1_idx` (`repartidor_id` ASC) VISIBLE,
   CONSTRAINT `fk_comanda_client1`
     FOREIGN KEY (`client_client_id`)
-    REFERENCES `pizzeria`.`client` (`client_id`)
+    REFERENCES `client` (`client_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_comanda_empleat1`
     FOREIGN KEY (`repartidor_id`)
-    REFERENCES `pizzeria`.`empleat` (`empleat_id`)
+    REFERENCES `empleat` (`empleat_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`categoria_pizza`
+-- Table `categoria_pizza`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`categoria_pizza` (
-  `categoria_pizza_id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS `categoria_pizza` (
+  `categoria_pizza_id` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(128) NOT NULL,
   PRIMARY KEY (`categoria_pizza_id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`producte`
+-- Table `producte`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`producte` (
+CREATE TABLE IF NOT EXISTS `producte` (
   `producte_id` INT NOT NULL AUTO_INCREMENT,
   `nom` VARCHAR(45) NOT NULL,
   `descripcio` TEXT NOT NULL,
@@ -130,16 +119,16 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`producte` (
   INDEX `fk_producte_categoria1_idx` (`categoria_pizza_id` ASC) VISIBLE,
   CONSTRAINT `fk_producte_categoria_pizza1`
     FOREIGN KEY (`categoria_pizza_id`)
-    REFERENCES `pizzeria`.`categoria_pizza` (`categoria_pizza_id`)
+    REFERENCES `categoria_pizza` (`categoria_pizza_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria`.`comanda_has_producte`
+-- Table `comanda_has_producte`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `pizzeria`.`comanda_has_producte` (
+CREATE TABLE IF NOT EXISTS `comanda_has_producte` (
   `comanda_comanda_id` INT NOT NULL,
   `producte_producte_id` INT NOT NULL,
   `cantidad` INT NOT NULL,
@@ -148,12 +137,12 @@ CREATE TABLE IF NOT EXISTS `pizzeria`.`comanda_has_producte` (
   INDEX `fk_comanda_has_producte_comanda1_idx` (`comanda_comanda_id` ASC) VISIBLE,
   CONSTRAINT `fk_comanda_has_producte_comanda1`
     FOREIGN KEY (`comanda_comanda_id`)
-    REFERENCES `pizzeria`.`comanda` (`comanda_id`)
+    REFERENCES `comanda` (`comanda_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_comanda_has_producte_producte1`
     FOREIGN KEY (`producte_producte_id`)
-    REFERENCES `pizzeria`.`producte` (`producte_id`)
+    REFERENCES `producte` (`producte_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -162,3 +151,325 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (1, '909 Wisoky Prairie Suite 514', '74318', 'Gutmannstad', 'Delaware');
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (2, '31349 Mayer Turnpike', '99497-2437', 'Karleytown', 'Missouri');
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (3, '02335 Ledner Underpass Apt. 842', '72829', 'Bradlyville', 'NewMexico');
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (4, '181 Johnnie Way', '29993', 'West Terrymouth', 'Oklahoma');
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (5, '279 Jerde Flat Suite 119', '51728-3439', 'Camrynberg', 'WestVirginia');
+INSERT INTO `botiga` (`botiga_id`, `adreca`, `codi_postal`, `localitat`, `provincia`) VALUES (6, '890 Runte Walk Apt. 092', '45176-9399', 'East Krista', 'Washington');
+
+
+INSERT INTO `categoria_pizza` (`categoria_pizza_id`, `nom`) VALUES (1, 'autem');
+INSERT INTO `categoria_pizza` (`categoria_pizza_id`, `nom`) VALUES (2, 'qui');
+INSERT INTO `categoria_pizza` (`categoria_pizza_id`, `nom`) VALUES (3, 'quasi');
+INSERT INTO `categoria_pizza` (`categoria_pizza_id`, `nom`) VALUES (4, 'perspiciatis');
+INSERT INTO `categoria_pizza` (`categoria_pizza_id`, `nom`) VALUES (5, 'debitis');
+
+
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (1, 'Krystal', 'Ullrich', '1515 Morissette Forest', 'Bergehaven', 'NewMexico', '27046', '329.621.1102x654');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (2, 'Freddy', 'Larkin', '82217 Clotilde Mall Apt. 573', 'South Retha', 'Nevada', '48385-0782', '(235)560-7828');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (3, 'Jason', 'Schuster', '4602 Hayes Isle Apt. 935', 'Bradtkestad', 'Georgia', '85256-5494', '1-335-763-4634');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (4, 'Armando', 'Quitzon', '318 Stamm Throughway Apt. 936', 'West Maggiemouth', 'District of Columbia', '10946-3277', '456-455-8494x794');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (5, 'Emmie', 'O\'Conner', '862 Moore Glen', 'Juanitaton', 'NewMexico', '53789-5745', '(760)781-3338x6938');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (6, 'Monroe', 'Strosin', '97645 Dach Creek', 'Zachariahborough', 'Nevada', '41834-3604', '132.823.5827x0550');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (7, 'Aric', 'Johnston', '4113 Ledner Square', 'Kyleville', 'NewJersey', '14166-1769', '+30(3)0230987249');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (8, 'Catharine', 'Kertzmann', '5233 Treutel Fort', 'Corwinport', 'Alabama', '24437', '1-344-700-2719x22651');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (9, 'Dianna', 'Dicki', '913 Brakus Drive Suite 994', 'New Ozellahaven', 'Virginia', '88351-6117', '381.504.8080');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (10, 'Tyreek', 'Kunze', '6740 Price Points Apt. 903', 'South Autumnhaven', 'SouthCarolina', '25645-8892', '936-580-3716x120');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (11, 'Maud', 'Fisher', '2674 Littel Mountain Suite 705', 'Berrytown', 'Washington', '88649-4213', '685-596-5208');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (12, 'Dorris', 'Kohler', '66609 Collins Stream', 'South Karianeshire', 'WestVirginia', '67125', '(819)999-4268');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (13, 'Godfrey', 'Bailey', '3324 Kassulke Mountain', 'Hegmannburgh', 'Arkansas', '00234', '1-236-872-5853x432');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (14, 'Pearlie', 'Rempel', '19651 Blanda Junctions Apt. 318', 'New Rachaelmouth', 'Missouri', '29705-2370', '(646)245-2787');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (15, 'Meagan', 'Boyer', '0490 Lueilwitz Glens', 'Port Taureanport', 'WestVirginia', '28598-1515', '+68(6)0393902699');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (16, 'Jamaal', 'Frami', '84264 Isai Junctions', 'South Martine', 'NewMexico', '36271-8121', '527.312.5266');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (17, 'Karlie', 'Gerhold', '742 Travon Ridge Suite 555', 'North Kelsi', 'Missouri', '63080', '1-706-228-7411');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (18, 'Christina', 'Robel', '08515 West Garden', 'Joelleville', 'Utah', '69048', '140-866-9670');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (19, 'Phoebe', 'Wolf', '680 Dante Keys Suite 856', 'North Maiya', 'Wisconsin', '10257-3476', '(630)882-0015');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (20, 'Albert', 'Schmidt', '1664 Pasquale River Apt. 639', 'Port Osbornemouth', 'WestVirginia', '61565', '00243424516');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (21, 'Erna', 'Murphy', '2711 Weimann Cliff Suite 983', 'Port Cadenmouth', 'Maine', '05422-1149', '(296)210-0301x888');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (22, 'Nikko', 'Buckridge', '29073 Aryanna Canyon', 'New Masonberg', 'NewYork', '82328-6519', '(076)697-7557');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (23, 'Tierra', 'Zemlak', '528 Walker Knoll', 'Lake Tomasa', 'Colorado', '17211', '515-883-4069x6553');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (24, 'Pearline', 'Streich', '83874 Hyatt Neck Apt. 982', 'Octaviamouth', 'NewHampshire', '15714-0022', '1-521-400-5920');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (25, 'Otto', 'Brakus', '64864 Murray Cliff Apt. 271', 'New Reneeburgh', 'Vermont', '41669', '964.423.1627x136');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (26, 'Alverta', 'Collier', '067 Raegan Villages Apt. 462', 'Lake Sheamouth', 'Illinois', '38766', '+44(2)1395384846');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (27, 'Flossie', 'Herzog', '28992 Terry Row', 'Ritchiehaven', 'Maine', '12411-5782', '+03(6)4709713019');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (28, 'Chanelle', 'Yost', '45070 Kozey Trail Suite 947', 'Kirlinville', 'Idaho', '76961-5335', '863.602.3770x267');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (29, 'Randal', 'Ortiz', '7898 Jast Via Apt. 210', 'Keenanbury', 'Louisiana', '83894', '(524)556-2324x90101');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (30, 'Jevon', 'Bartoletti', '523 Thad Junctions Suite 263', 'Elsiebury', 'Louisiana', '16499-9428', '+52(6)8240931760');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (31, 'Cloyd', 'Waters', '71808 Hollis Trail', 'Shawnaburgh', 'Kentucky', '97983-6392', '1-782-919-5001x872');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (32, 'Jonatan', 'Shanahan', '74812 Thaddeus Overpass Apt. 438', 'Leraview', 'Ohio', '29846', '02858518769');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (33, 'Sven', 'Ankunding', '156 Tillman Square', 'North Delphine', 'Utah', '24972-7352', '(786)056-2140x587');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (34, 'Alvah', 'Kuhlman', '409 Meaghan Ways Apt. 394', 'Willside', 'NorthCarolina', '20071', '360.188.7171x6340');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (35, 'Virgie', 'Grant', '618 Adolfo Common Apt. 490', 'East Nelsontown', 'NewMexico', '70929-4472', '728.816.2032x771');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (36, 'Darby', 'Funk', '083 Gutmann Turnpike Apt. 603', 'Pagacview', 'Alaska', '35959', '854-738-7482x572');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (37, 'Name', 'McKenzie', '692 Alexanne Corner', 'Casandramouth', 'Utah', '96052', '1-316-948-6047x261');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (38, 'Ofelia', 'DuBuque', '375 Schinner Way Suite 187', 'West Mateoport', 'Kentucky', '54479-4219', '733-075-4806x8648');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (39, 'Adolph', 'Huel', '365 Millie Cliff Apt. 472', 'Ellisport', 'NorthDakota', '29431', '1-438-996-7350x7968');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (40, 'Summer', 'Davis', '99375 Herman Square', 'Ornshire', 'Idaho', '07983', '1-332-442-3028x147');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (41, 'Leanna', 'Sipes', '68118 Grayson Wells', 'New Shawn', 'NewMexico', '28058', '442-904-3280');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (42, 'Neha', 'Hintz', '156 Witting Orchard Apt. 805', 'North Marilieton', 'WestVirginia', '28720-2714', '1-485-892-3784x53767');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (43, 'Nella', 'Crona', '981 Barton Square Apt. 559', 'Huelston', 'NewHampshire', '02234', '+28(3)2708544295');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (44, 'Regan', 'VonRueden', '571 O\'Keefe Spur', 'North Eliside', 'Mississippi', '85046-2143', '377-834-9892x227');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (45, 'Elenora', 'Treutel', '472 Yost Lake Apt. 277', 'New Sammie', 'RhodeIsland', '85253', '809.026.4659');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (46, 'Brielle', 'Kessler', '67999 Osinski Path', 'North Davonton', 'Delaware', '92866', '068.829.0492');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (47, 'Mervin', 'Gutmann', '88277 Lindgren Islands Suite 364', 'West Adeline', 'Arkansas', '61508-9838', '(959)425-3472x542');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (48, 'Zoila', 'Johns', '4037 Nienow Pass', 'Nienowstad', 'Hawaii', '75694-1105', '758-603-1511x79469');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (49, 'Madge', 'Hegmann', '72265 Leanna Orchard', 'West Vidafurt', 'Louisiana', '62462', '716.251.3775');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (50, 'Domenick', 'Koepp', '55304 Dean Cape', 'Port Mike', 'Delaware', '08984', '(884)723-3575x066');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (51, 'Rebekah', 'Pagac', '894 Eudora Causeway Apt. 866', 'North Odelltown', 'NewJersey', '20463-3916', '1-530-773-9516x091');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (52, 'Lavada', 'Gutkowski', '3393 Herzog Greens Suite 562', 'Lake Skylashire', 'Utah', '50639', '+67(5)6743294861');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (53, 'Austin', 'Fritsch', '70348 Jewel Inlet', 'Lake Emileborough', 'District of Columbia', '24380-9380', '1-258-513-6011x70158');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (54, 'Patsy', 'Buckridge', '1251 Adrianna Plain Apt. 368', 'Port Royalburgh', 'Oklahoma', '37728', '(192)639-7393');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (55, 'Sean', 'Wisoky', '081 Kertzmann Gateway Apt. 399', 'West Oran', 'Texas', '90491-1820', '+29(3)1597104012');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (56, 'Armani', 'Stracke', '77187 Gunnar Hills', 'North Bobbie', 'Pennsylvania', '74726-7674', '461.049.2826');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (57, 'Karianne', 'Hudson', '91685 Santos Springs Suite 585', 'Morarport', 'Delaware', '41837', '059.496.4372x3936');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (58, 'Julian', 'Price', '49110 Geoffrey Plain Suite 496', 'East Trever', 'Arkansas', '37289', '760-480-9917');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (59, 'Jude', 'Lemke', '878 Bernadine Trafficway', 'Williamsonshire', 'Virginia', '81790-1499', '1-254-026-9330x99239');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (60, 'Jarvis', 'VonRueden', '952 Dolores Bridge', 'Vincenzatown', 'California', '07322-2668', '+89(1)4219015000');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (61, 'Horace', 'Bahringer', '6349 Ova Bridge', 'Camilaport', 'Florida', '40571-7386', '1-599-315-0443x7087');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (62, 'Brandyn', 'Rohan', '7707 Rowe Flat Suite 498', 'Alexandroland', 'Kansas', '33771-4546', '1-868-099-9762x3008');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (63, 'Oscar', 'Hettinger', '72866 Macejkovic Plaza Apt. 217', 'Douglasside', 'Arkansas', '15652', '1-183-166-0471');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (64, 'Reymundo', 'Volkman', '5439 Rico Pike', 'East Aliyahtown', 'Wisconsin', '52186-1727', '998-959-5700x1233');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (65, 'Jacques', 'Prohaska', '1254 Hoeger Inlet', 'North Hildegardland', 'Missouri', '39415', '654-934-0830x596');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (66, 'Oran', 'Little', '958 Madilyn Ramp', 'North Gerda', 'Maine', '26447', '(143)433-3278');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (67, 'Rafael', 'Mann', '30397 McCullough Crescent Suite 497', 'East Florencestad', 'Oklahoma', '52582-6249', '(741)849-2110x1788');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (68, 'Dimitri', 'Bins', '08160 Renner Stravenue', 'West Shaylee', 'Kentucky', '37979-4495', '133.101.9309x172');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (69, 'Alexandre', 'Cummerata', '440 Corwin Corner Apt. 664', 'Lake Pollymouth', 'RhodeIsland', '75952-8118', '(577)929-2270x6022');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (70, 'Maurice', 'Witting', '44437 Lera Mission Apt. 623', 'Port Henderson', 'Louisiana', '79820', '356.069.2417x0945');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (71, 'Destini', 'Senger', '082 Becker Motorway Apt. 156', 'Schadenton', 'Indiana', '46046', '146.309.3077x42916');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (72, 'Mable', 'Kshlerin', '7061 Goyette Neck Suite 267', 'Holdenside', 'Pennsylvania', '61582', '(168)122-2383x09415');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (73, 'Shanon', 'Schoen', '2145 Corrine Plaza', 'Lockmanport', 'Delaware', '02298-5496', '(717)464-9548x6252');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (74, 'Brenda', 'Wisoky', '6893 Alberta Ferry Suite 754', 'Breitenbergtown', 'Pennsylvania', '06532', '1-650-259-9142x7384');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (75, 'Lue', 'Boehm', '10442 Marvin Mill', 'North Carriebury', 'Delaware', '60270-4514', '1-332-445-9471');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (76, 'Cindy', 'Kutch', '0865 Bernhard Fields Suite 626', 'North Roscoe', 'Minnesota', '08299-8535', '+94(7)6661870651');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (77, 'Rashad', 'Wuckert', '051 Crist Curve Apt. 390', 'East Reedview', 'Louisiana', '57984-1830', '1-970-997-4986x310');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (78, 'Chyna', 'Pouros', '5770 Kaitlin Key Apt. 140', 'South Abe', 'Oregon', '95913-9406', '200.102.7123x38956');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (79, 'Zelda', 'Rice', '190 Ardella Point Apt. 552', 'Trentonton', 'NewYork', '51396-8554', '652.678.1847x725');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (80, 'Ned', 'Kirlin', '5099 Collins Pike', 'West Lisandro', 'Montana', '19551-8883', '1-428-233-5534x1677');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (81, 'Neha', 'Schinner', '36542 Delilah Route', 'Dangeloborough', 'Tennessee', '84319', '(605)971-5022');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (82, 'Urban', 'Schiller', '216 Luna Terrace Suite 586', 'Abernathyville', 'WestVirginia', '14727', '203.029.7926x053');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (83, 'Kasey', 'Beer', '296 Roberta Bypass', 'New Julianfort', 'Vermont', '87763', '761-208-4077');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (84, 'Lauriane', 'Goldner', '355 Kihn Dam Apt. 491', 'Homenicktown', 'Idaho', '42689', '(365)846-7181x260');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (85, 'Loraine', 'Lebsack', '4990 Mallory Mountain', 'South Maureen', 'Texas', '50633-0320', '1-279-035-6522x3871');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (86, 'Dorris', 'Cole', '790 Andreanne Drive Suite 919', 'Dorothyview', 'Wisconsin', '07307', '+84(0)2341501347');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (87, 'Etha', 'Sporer', '94958 Kris Trail', 'Muellerton', 'NorthDakota', '69787', '652-434-4921x80890');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (88, 'German', 'Romaguera', '7092 Hoeger Isle', 'West Ryleigh', 'Ohio', '97409-3620', '093.464.1865x39596');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (89, 'Heidi', 'Grady', '371 Champlin Lakes', 'Aliviaview', 'Hawaii', '43499', '1-105-348-9606x305');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (90, 'Marjorie', 'Kling', '0244 Grayce Extension', 'South Devonfurt', 'Delaware', '76028-2453', '169.122.4821x2186');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (91, 'Marion', 'DuBuque', '61961 Burnice Lodge', 'East Logan', 'NewMexico', '26352', '042.470.5995x2240');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (92, 'Kiara', 'Luettgen', '844 Maximillian Rue', 'Quitzonville', 'Indiana', '77372-5200', '(350)088-1666');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (93, 'Mikel', 'Buckridge', '515 Tamia Walks', 'Braxtonbury', 'Arkansas', '37884-0162', '06697781338');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (94, 'Elda', 'Kirlin', '89984 Bednar Crescent Suite 652', 'Denesikshire', 'Montana', '59338-3869', '380-867-5438x7368');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (95, 'Carey', 'Funk', '165 Heller Way', 'Osbaldostad', 'Massachusetts', '44097-5725', '976-051-5291x28317');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (96, 'Chaim', 'Larkin', '793 Kaia Ports Apt. 066', 'Watsicabury', 'Kansas', '08599', '048-158-1812');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (97, 'Dylan', 'Champlin', '5671 Haley Forest', 'Sarahmouth', 'Texas', '21046-5024', '773-424-4470x7571');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (98, 'Greta', 'Wiza', '386 Casper Radial Suite 021', 'New Danteborough', 'NewMexico', '49853-2534', '1-928-762-3549x26199');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (99, 'Rosamond', 'Powlowski', '42298 Helene Hills', 'Jastville', 'NewMexico', '71644', '391-813-9535x6843');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (100, 'Arturo', 'Huels', '0742 Jadyn Causeway Apt. 583', 'Lake Mathewview', 'California', '85106-6057', '650-566-7991x2499');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (101, 'Janice', 'Rempel', '58595 Werner Court', 'Beattyview', 'Missouri', '53267-2982', '(738)878-8822');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (102, 'Willard', 'Becker', '3928 Kulas Highway Suite 730', 'Gaylordfort', 'Connecticut', '24691-0226', '390-984-4524');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (103, 'Jaren', 'O\'Reilly', '83738 Schuppe Rest Apt. 856', 'Mckaylaville', 'SouthDakota', '04125', '218.619.7337');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (104, 'Dayana', 'Kunze', '8197 Margarette Summit', 'Hayesshire', 'District of Columbia', '27399', '(571)569-5567x441');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (105, 'Kaylin', 'Bergnaum', '39082 Jazmyn Crescent', 'Lake Maureenport', 'Pennsylvania', '66542', '1-593-786-0010x2704');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (106, 'Forrest', 'Jerde', '47092 Trantow Forge Suite 516', 'Lauraborough', 'Vermont', '85585', '744-526-7586x977');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (107, 'Turner', 'Mosciski', '06335 Araceli Harbor Apt. 256', 'West Allenmouth', 'Hawaii', '68181', '(402)656-8877x8661');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (108, 'Carmine', 'Hessel', '90571 Toy Shore Suite 866', 'Port Raphaellestad', 'Arkansas', '95901-7180', '1-585-234-2117x56805');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (109, 'Roberta', 'Cronin', '449 Trantow Canyon Apt. 193', 'South Oceaneview', 'NorthCarolina', '88919', '1-742-695-8205x83595');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (110, 'Susanna', 'Predovic', '48588 Bauch Common Suite 741', 'Stephaniamouth', 'Kansas', '77184', '1-881-801-7123x30749');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (111, 'Sandrine', 'Boyer', '10706 Ernestina Tunnel Apt. 461', 'Roslynville', 'District of Columbia', '64547', '176-120-5827x6000');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (112, 'Isaiah', 'Dickens', '10109 Reichert Orchard', 'Haneport', 'Connecticut', '89056', '553.669.0110');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (113, 'Hosea', 'Mante', '99975 Lavina Ways Suite 353', 'West Christianastad', 'District of Columbia', '03374-3861', '779-671-0008');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (114, 'Trycia', 'Wisozk', '98491 Rolfson Loop', 'Bernhardland', 'Delaware', '46952-9455', '(632)921-3203');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (115, 'Winifred', 'Gleichner', '4148 Annabel Flats', 'West Garrison', 'Iowa', '60688', '255-903-8855x055');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (116, 'Larue', 'Jacobs', '107 Grimes Valley Apt. 219', 'Lake Otis', 'Ohio', '44148-6699', '(284)905-9834x31638');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (117, 'Kyleigh', 'Tillman', '239 Berge Gardens', 'Lake Josephine', 'Hawaii', '29074-4781', '(536)907-6938x759');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (118, 'Agnes', 'Wunsch', '9596 Elva Via', 'South Anthony', 'RhodeIsland', '02003-8521', '02744648855');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (119, 'Alexane', 'Kemmer', '0578 Rohan Islands Apt. 396', 'Zacharyberg', 'Arkansas', '45514-1055', '1-719-807-1164x037');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (120, 'Stanley', 'Keebler', '906 Jacky Port Suite 918', 'Port Darenside', 'Connecticut', '14268-6679', '01899561677');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (121, 'Fiona', 'Ward', '5642 Kautzer Isle', 'Lake Arnoldoport', 'Tennessee', '25956-5925', '02114962598');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (122, 'Wava', 'Kuhic', '5681 Brayan Hollow', 'Jacemouth', 'Iowa', '43608-3309', '01036617262');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (123, 'Pascale', 'Bergnaum', '0689 Weldon Fields Apt. 066', 'East Sydni', 'NorthDakota', '48964-8474', '(673)047-2952x73195');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (124, 'Haley', 'Hahn', '3166 Murray Ridges', 'North Ron', 'Louisiana', '25623-9035', '(969)943-4318x38436');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (125, 'Dakota', 'Medhurst', '6596 Mauricio Shore', 'North Alexys', 'Colorado', '54112-2836', '013-624-2209x811');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (126, 'Moises', 'Schiller', '892 Timmy Overpass', 'West Judge', 'Indiana', '63411', '03616614745');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (127, 'Itzel', 'Wyman', '42102 Fadel Circle Suite 788', 'West Belle', 'NewHampshire', '56082', '448.775.9138x120');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (128, 'Haleigh', 'Walker', '35005 Sven Road', 'North Mossie', 'Kansas', '51476', '(067)231-9770x7069');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (129, 'Augusta', 'Bechtelar', '528 Towne Glen Apt. 888', 'New Vivienfurt', 'SouthDakota', '36286', '1-505-109-5581');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (130, 'Deven', 'Ritchie', '244 Werner Vista Suite 531', 'East Mathilde', 'Illinois', '15014', '(456)125-9523');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (131, 'Kamren', 'Tillman', '007 Sonia Radial Suite 559', 'Lake Vicentaville', 'Georgia', '67627-7469', '+01(1)8525041773');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (132, 'Selmer', 'Satterfield', '03022 Collins Place Suite 001', 'Weimannborough', 'Louisiana', '77020', '1-366-985-5477');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (133, 'Wilton', 'Kerluke', '317 Bartell Throughway Suite 446', 'South Vicentaton', 'Utah', '74924-5704', '490-794-0355');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (134, 'Baron', 'Friesen', '857 Omari Row Suite 043', 'Friesenview', 'SouthDakota', '23172', '370.476.9540x6182');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (135, 'Marta', 'McDermott', '91628 Kris Inlet Apt. 208', 'New Oceanehaven', 'California', '90692', '(248)197-6069x6621');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (136, 'Norwood', 'McClure', '45130 Kirlin Road', 'East Hallietown', 'Utah', '03544-0577', '567-257-4448x6821');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (137, 'Floy', 'O\'Conner', '9045 Hickle Lodge Suite 400', 'Lake Kevenshire', 'Michigan', '69367-6093', '(347)190-3596');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (138, 'Laverne', 'Beahan', '5361 Tad Street', 'Sporerport', 'Mississippi', '34318-7152', '(172)351-4865x7238');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (139, 'Johnson', 'Abshire', '1617 Barrows Meadows', 'Lisachester', 'Arkansas', '36417-2359', '+99(1)3876907839');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (140, 'Dovie', 'O\'Keefe', '4421 Feest Islands', 'Lake Skylar', 'Virginia', '48520', '(502)076-2903');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (141, 'Miracle', 'Conroy', '003 Corwin Viaduct Suite 127', 'Candelariochester', 'Arizona', '67482', '1-112-015-1650x42168');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (142, 'Lucie', 'Ward', '488 Hunter Brook', 'South Burnice', 'Kentucky', '90799', '(284)505-0501');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (143, 'Candice', 'Schmitt', '053 Vivian Coves Suite 504', 'Lake Vedafort', 'NewHampshire', '95458', '583-480-3785x65376');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (144, 'Lavern', 'Torphy', '794 Hodkiewicz Fort', 'Bechtelarfort', 'RhodeIsland', '12626-4412', '1-903-426-1511x23530');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (145, 'Ellen', 'Medhurst', '0668 Dejah Crossing', 'Marquardtbury', 'Florida', '29179-5308', '121-976-6974x9479');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (146, 'Asha', 'Brown', '681 Waters Hill', 'New Tia', 'Missouri', '73365-8238', '1-985-910-3914');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (147, 'Craig', 'Bosco', '6999 Corkery Canyon', 'West Rosaview', 'Washington', '29346', '863.631.2218x95937');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (148, 'Serenity', 'Kertzmann', '169 Braun Summit', 'New Murray', 'Indiana', '25129', '209.194.7531');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (149, 'Brain', 'Jakubowski', '7122 Ruecker Stream', 'Lake Jane', 'WestVirginia', '37550-1658', '(513)914-2979x287');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (150, 'Peggie', 'Huel', '84404 Ferry Brook Apt. 849', 'South Caden', 'District of Columbia', '45698-5955', '222-283-5271x141');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (151, 'Breanne', 'Ullrich', '7121 Ezekiel Via Apt. 351', 'Gissellebury', 'District of Columbia', '04709-0420', '294.030.2767x0093');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (152, 'Mathilde', 'Stehr', '256 Moore Shoals Suite 371', 'Bauchton', 'Alaska', '91259-8622', '(409)009-7002x1159');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (153, 'Nolan', 'Macejkovic', '29017 Langworth Underpass Suite 614', 'New Wilfredberg', 'Tennessee', '72274', '776-274-8581x17674');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (154, 'Laurianne', 'Hermiston', '0885 Mann Squares Apt. 038', 'Juddbury', 'Vermont', '07992-4019', '456.110.7479x7464');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (155, 'Devonte', 'Jacobson', '48718 Mueller Club Suite 645', 'Kovacekfurt', 'Wisconsin', '71900-1062', '1-522-763-2364x19802');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (156, 'Zachariah', 'Hand', '7050 Schamberger Drives', 'South Garrickview', 'Indiana', '63364-4454', '592.277.4966');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (157, 'Ethelyn', 'Sawayn', '78030 Witting Orchard', 'Lawrencefort', 'Mississippi', '86814-6694', '534-545-1056');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (158, 'Abby', 'Hartmann', '067 Cartwright Glen Suite 198', 'West Loyalmouth', 'Iowa', '99249', '+23(7)8227236397');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (159, 'Alexandrea', 'Labadie', '31716 Carolyne Island', 'Khalidland', 'Minnesota', '60478', '505.239.7109');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (160, 'Theresia', 'McCullough', '7715 Orn Keys Suite 219', 'West Hortensemouth', 'Ohio', '80555', '(782)142-2013x927');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (161, 'Angelita', 'Wolff', '26580 Lolita Curve Suite 058', 'Hermannview', 'Utah', '87133', '790-120-2677x6028');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (162, 'General', 'Muller', '5523 Adonis Divide Apt. 976', 'Lake Angelina', 'Washington', '55048-0873', '871.232.0481');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (163, 'Manuel', 'Schaden', '2513 Conn Points', 'Cathrynchester', 'Nebraska', '19894-9078', '320-696-6875');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (164, 'Jordyn', 'Dietrich', '214 Tomasa Oval Apt. 554', 'Bodeville', 'Washington', '60435-4947', '497.515.6906x96023');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (165, 'Jacky', 'Kerluke', '996 McGlynn Squares Apt. 310', 'Schroederview', 'NewYork', '06977-7030', '968.323.1511');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (166, 'Fernando', 'Daugherty', '017 Tamara Park', 'Demariomouth', 'Delaware', '16769-3383', '+71(2)1159973287');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (167, 'Hilma', 'Satterfield', '4763 Emmalee Station', 'West Darrellton', 'Nevada', '26594-3811', '318-236-5166');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (168, 'Juliana', 'Gusikowski', '00161 Greenholt Isle', 'Brooklynmouth', 'Arkansas', '32029-5074', '1-540-846-0340');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (169, 'Kyra', 'Marvin', '28589 Barton River', 'Geraldineburgh', 'Tennessee', '63331', '(830)826-1317x4503');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (170, 'Ola', 'Hills', '05461 Reynolds Green Suite 305', 'Pouroschester', 'NorthCarolina', '92618', '309-813-0931x22409');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (171, 'Alvera', 'Heathcote', '227 Baby Lane', 'Odiechester', 'Illinois', '88630', '870.165.8266x6260');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (172, 'Jeanne', 'Murray', '98785 Schroeder Rapids Apt. 350', 'Kohlerport', 'Vermont', '80762', '721.360.7571');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (173, 'Zena', 'Jakubowski', '01454 Welch Cliff', 'Danialside', 'Nebraska', '84194', '1-213-724-8267');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (174, 'Blanca', 'Zemlak', '121 Murazik Fork', 'Vincentland', 'NorthDakota', '19881-3602', '(216)621-7746');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (175, 'Hettie', 'Haag', '42004 Otho Circles Suite 183', 'West Rico', 'Mississippi', '85050', '(657)463-5948x12518');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (176, 'Oral', 'Prosacco', '997 Denesik Well', 'Brakusburgh', 'Minnesota', '15431', '(097)101-7637');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (177, 'Ena', 'Upton', '1029 Darian Land Apt. 999', 'Port Daxshire', 'NewJersey', '80963-7422', '1-726-116-2186');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (178, 'Kari', 'Crona', '7111 Derick Locks Suite 700', 'Lydiaview', 'SouthDakota', '11723-9790', '594.616.7573');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (179, 'Christop', 'Lemke', '283 Brittany Lodge', 'North Brad', 'SouthCarolina', '79381', '387-339-8144x8731');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (180, 'Gerry', 'Kuhn', '461 Brielle Streets', 'Stehrton', 'SouthDakota', '09891-8163', '(884)885-0412');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (181, 'Daron', 'Upton', '5039 Hellen Trail Suite 140', 'Lake Trudie', 'Kentucky', '56046-0768', '+25(1)3604899152');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (182, 'Rowland', 'Johnston', '29510 Schumm Valley Apt. 574', 'West Kirsten', 'Ohio', '99800', '199.206.0438');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (183, 'Lonny', 'O\'Reilly', '48644 Powlowski Springs', 'Spencerhaven', 'Hawaii', '84825-0751', '172-764-3164');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (184, 'Dayna', 'Lehner', '727 Osinski Centers Suite 534', 'North Priscilla', 'SouthDakota', '40811-4299', '(739)703-4243x358');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (185, 'Elouise', 'Kulas', '6021 Misael Hollow', 'Caesarborough', 'Ohio', '46181-5114', '1-341-149-4008x26419');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (186, 'Melvina', 'Zboncak', '63281 Wade Circle', 'Vontown', 'District of Columbia', '71642-3297', '(417)752-1827');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (187, 'Viviane', 'Greenfelder', '1947 Oma Inlet', 'Zboncakfort', 'Louisiana', '77010', '015.640.1934x0072');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (188, 'Susana', 'Frami', '70308 Morissette Summit Suite 517', 'South Hulda', 'Colorado', '74654', '626-364-8922');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (189, 'Norris', 'Stokes', '18618 Hand Overpass', 'Aaliyahfort', 'Texas', '09037-9840', '02913729781');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (190, 'Hailey', 'Rowe', '49982 Lang Station', 'Katherineland', 'Illinois', '51206-2935', '212-171-0536x6598');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (191, 'Casimir', 'Leffler', '18959 Wisozk Groves', 'Vincentmouth', 'Ohio', '96976-3532', '1-568-273-3175');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (192, 'Ramon', 'Kuhic', '533 McDermott Passage', 'East Owen', 'Kentucky', '77763-8885', '06244576659');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (193, 'Mikayla', 'Denesik', '770 Klocko Highway', 'Karleeville', 'SouthDakota', '10696-4001', '1-168-582-8027');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (194, 'Kylee', 'Larkin', '995 Ally Shores Apt. 754', 'Harryland', 'Florida', '37337', '1-867-094-5348x03258');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (195, 'Lavina', 'Blick', '049 Beahan Summit', 'East Mellie', 'California', '04057', '1-440-466-2784');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (196, 'Marie', 'Ebert', '64013 Angelo Lakes', 'Lynchville', 'Missouri', '06805', '975-316-5873');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (197, 'Meta', 'Lang', '5060 Trey Skyway Apt. 850', 'Port Idellamouth', 'Nevada', '05220-1409', '(576)356-1835x449');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (198, 'Krista', 'Spinka', '8894 Lindgren Spring', 'Port Retamouth', 'Virginia', '29797-0727', '(036)983-1259x33233');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (199, 'Candelario', 'Legros', '49573 Bailey Ranch Apt. 713', 'East Tevintown', 'Maine', '00248', '1-094-990-9489x09013');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (200, 'Roscoe', 'Morar', '411 Moen Lock Apt. 265', 'South Marielle', 'NorthDakota', '28845-6281', '(247)091-8741x645');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (201, 'Eldora', 'Kautzer', '7819 Elisa Vista', 'Krajcikville', 'Nevada', '58488-6728', '455.007.5742');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (202, 'Adelia', 'Spinka', '452 Hattie Way', 'South Gretchen', 'Washington', '91386', '418.433.0908x3743');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (203, 'Kelley', 'Beatty', '2636 Fadel Stream', 'Hagenesbury', 'Florida', '48424-2179', '376-826-7984');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (204, 'Jennings', 'Nicolas', '858 Luciano Forges', 'North Eliza', 'California', '27906-4723', '1-764-601-1103');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (205, 'Ansley', 'Becker', '36507 Jaycee Drive Apt. 412', 'Annabelbury', 'NorthCarolina', '47745', '092.836.5903x95310');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (206, 'Felton', 'Koss', '078 Marianna Parkways Suite 527', 'Wilkinsonmouth', 'Florida', '68245', '465-753-6523x2573');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (207, 'Lawson', 'Rempel', '6299 Stamm Parkway Apt. 275', 'Fletcherburgh', 'RhodeIsland', '36284-2761', '550-960-6099');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (208, 'Itzel', 'Stracke', '79156 DuBuque Pass Suite 896', 'Fishershire', 'NewYork', '58982-2845', '1-216-404-1323');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (209, 'Felipa', 'Davis', '36373 Adams Throughway Apt. 711', 'Port Madonna', 'Illinois', '71096', '(344)226-1118x572');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (210, 'Declan', 'Bradtke', '3419 Zander Path', 'Odaburgh', 'Oklahoma', '06513', '(090)781-5581x9720');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (211, 'Rowan', 'Crist', '78609 Yesenia Burgs', 'New Jaymefurt', 'NewHampshire', '64757', '1-392-906-4837');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (212, 'Misael', 'Mills', '4928 Carole Trace', 'Port Keara', 'Iowa', '86913', '592.741.9975x716');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (213, 'Abdiel', 'Reilly', '4217 Muller Plains Apt. 925', 'Jeradbury', 'Oregon', '15290-9893', '(443)209-8413x85039');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (214, 'Adelle', 'Berge', '393 Lucy Mall Suite 384', 'West Lavadaborough', 'Oklahoma', '46805-0717', '914.722.0654');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (215, 'Noah', 'Ryan', '080 Evangeline Stream Apt. 239', 'Lake Mateo', 'NorthDakota', '35316', '(630)635-3314x107');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (216, 'Katrina', 'Conroy', '465 Vernice Courts', 'West Jerodtown', 'Kansas', '03637-3313', '285-094-7785x902');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (217, 'Nils', 'Wehner', '288 Carissa Burg Apt. 799', 'Toreyburgh', 'Tennessee', '89680', '544.927.1632x9038');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (218, 'Allen', 'Bauch', '277 Hodkiewicz Fields Apt. 397', 'Port Jaime', 'Hawaii', '12099', '(244)501-1569');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (219, 'Dell', 'Swift', '04881 Emmerich Roads', 'Port Antoniettaview', 'Louisiana', '58074-5054', '1-221-356-9812x5659');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (220, 'Russ', 'Homenick', '956 Bins Corners', 'South Claudieville', 'Nebraska', '22422', '087.349.2735x08560');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (221, 'Demetris', 'Kuhn', '0123 Alexandra Path Apt. 282', 'North Berenicebury', 'Nebraska', '95292', '06436492229');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (222, 'Jessie', 'Miller', '103 Aurelio Club Apt. 547', 'Skilesstad', 'Washington', '17615', '(957)763-9600x8411');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (223, 'Bradly', 'Barrows', '817 McGlynn Wall', 'Lake Ernestoberg', 'Idaho', '66884-4041', '596.351.2624x5964');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (224, 'Hayden', 'Schumm', '05619 Velma Street', 'Lindgrenport', 'District of Columbia', '74280', '349-038-9520x562');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (225, 'Chad', 'Mohr', '93947 Dorcas Path Apt. 365', 'West Icieberg', 'Pennsylvania', '88277', '+87(9)8407806280');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (226, 'Lionel', 'Little', '73147 Bayer Dam Apt. 673', 'Lake Chet', 'California', '37292', '358-893-9670');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (227, 'Colleen', 'Johns', '6049 Gilda Pike', 'North Lianaport', 'Connecticut', '51037', '1-428-359-1054x2955');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (228, 'Raegan', 'Zboncak', '194 Larson Pines', 'New Lurlinemouth', 'Idaho', '93926', '(076)746-5648x3993');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (229, 'Judge', 'Johnston', '437 Aniya Spur', 'Port Twila', 'California', '65333', '509-849-1613');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (230, 'Montana', 'Hackett', '06926 Carmen Groves Apt. 708', 'East Alda', 'Mississippi', '87770', '579-491-5930x23917');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (231, 'Halie', 'Jerde', '838 Mraz Motorway', 'Littleport', 'Montana', '25847', '906.165.2528');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (232, 'Samanta', 'Skiles', '99860 Ethan Mission Suite 415', 'Natborough', 'Oregon', '94275-9717', '516-983-5263x3406');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (233, 'Ben', 'Turner', '66649 Gottlieb Spur', 'South Maymouth', 'Texas', '64945-7483', '806-451-1722x330');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (234, 'Antwon', 'Gislason', '87811 Kayla Springs Apt. 949', 'South Audrey', 'Massachusetts', '92196-9533', '161.674.2188x482');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (235, 'Alexie', 'Ritchie', '1862 Cummerata Harbor Apt. 109', 'North Avis', 'Washington', '50931-1859', '519-776-0399x93673');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (236, 'Josefa', 'Johnston', '46846 Schiller Trail Apt. 639', 'East Travisfurt', 'Florida', '17990-1149', '903.706.7533');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (237, 'Evalyn', 'Ziemann', '521 Jennyfer Union', 'New Magali', 'District of Columbia', '29115-6441', '+47(3)6047734036');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (238, 'Jakob', 'Howell', '409 Zane Inlet', 'Kuhicville', 'Florida', '84143', '1-987-218-6562x9141');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (239, 'Marianne', 'Lueilwitz', '17174 Macejkovic Viaduct', 'Margotville', 'Oklahoma', '48537-6473', '(134)936-8366');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (240, 'Minnie', 'Jakubowski', '77533 Feil Skyway', 'Kshlerinhaven', 'Montana', '96531-5280', '895-838-8696');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (241, 'Murray', 'Schuppe', '842 Gulgowski Keys', 'South Aldenbury', 'Tennessee', '06609-6256', '1-124-684-0922');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (242, 'Francesco', 'Friesen', '254 Ruthie Spur', 'East Julio', 'Kansas', '34193-0149', '603-159-8475x7824');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (243, 'Arvid', 'Moen', '4690 Tianna Shoals', 'Port Alexandriaborough', 'Alaska', '65224-8566', '697.304.0217x893');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (244, 'Joanny', 'Block', '67566 Lorenz Passage', 'Mrazton', 'Arizona', '86565-6125', '677.607.4184');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (245, 'Heidi', 'Erdman', '376 Lucio Landing Suite 596', 'New Dayneside', 'Arizona', '39927', '1-762-109-7433');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (246, 'Donald', 'Russel', '32523 Marvin Overpass', 'Mollyfort', 'Delaware', '94988', '(648)784-4345x012');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (247, 'Emily', 'Aufderhar', '49009 Kyleigh Valleys', 'East Aaronton', 'NorthDakota', '02681-2414', '(656)178-9421');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (248, 'Briana', 'Leuschke', '1455 Willard Well', 'Gislasonburgh', 'Nevada', '25268', '(096)333-9026x261');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (249, 'Tristian', 'Cartwright', '6236 Nolan Shore Apt. 085', 'Wilhelminetown', 'Utah', '94081-8882', '(257)260-1599x76948');
+INSERT INTO `client` (`client_id`, `nom`, `cognoms`, `adreca`, `localitat`, `provincia`, `codi_postal`, `telefono`) VALUES (250, 'Jess', 'Beier', '065 Jarred Drive Suite 619', 'West Maymieshire', 'Oregon', '52873', '1-828-514-4078');
+
+
+
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (1, 'Darren', 'Erdman', '05917562h', '985-385-426', 'repartidor', 2);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (2, 'Carrie', 'Kessler', '01903725a', '871-727-567', 'repartidor', 1);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (3, 'Garrick', 'Johnson', '32748940f', '412-942-901', 'repartidor', 6);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (4, 'Zoey', 'Nicolas', '16928012t', '412-517-193', 'repartidor', 6);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (5, 'Deborah', 'Prosacco', '11251405u', '470-764-441', 'repartidor', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (6, 'Maurine', 'Kreiger', '43284563r', '969-955-063', 'cuiner', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (7, 'German', 'Pacocha', '87028731o', '466-915-297', 'cuiner', 2);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (8, 'Terrell', 'Jakubowski', '69804051y', '693-907-540', 'repartidor', 4);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (9, 'Kari', 'Nikolaus', '88081611p', '730-583-361', 'cuiner', 6);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (10, 'Precious', 'Mertz', '37528137s', '061-169-124', 'repartidor', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (11, 'Colleen', 'Ward', '08282380g', '937-396-062', 'cuiner', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (12, 'Laurie', 'Pfannerstill', '53093853n', '627-774-245', 'cuiner', 3);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (13, 'Thea', 'Gorczany', '67141395k', '573-271-796', 'cuiner', 4);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (14, 'Myah', 'Gutkowski', '32491553l', '736-436-284', 'cuiner', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (15, 'Charity', 'Walsh', '15351706x', '378-611-663', 'cuiner', 5);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (16, 'Ludie', 'Koepp', '61737443m', '106-295-743', 'repartidor', 2);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (17, 'Raphaelle', 'Robel', '78802909s', '524-962-421', 'repartidor', 3);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (18, 'Demarcus', 'Hintz', '87204426y', '123-243-455', 'cuiner', 3);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (19, 'Bernard', 'Hoeger', '23912255p', '952-543-342', 'cuiner', 2);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (20, 'Caesar', 'Weimann', '34595319h', '979-484-362', 'repartidor', 3);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (21, 'Reggie', 'Sipes', '21712146z', '728-887-336', 'cuiner', 1);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (22, 'Kristy', 'Bins', '56715640r', '851-650-720', 'cuiner', 2);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (23, 'Evalyn', 'Abbott', '12011859w', '754-706-015', 'repartidor', 1);
+INSERT INTO `empleat` (`empleat_id`, `nom`, `cognoms`, `nif`, `telefon`, `cargo`, `botiga_id`) VALUES (24, 'Herminio', 'Jaskolski', '15550902n', '570-619-556', 'cuiner', 6);
+
+
+
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (1, 'quia', 'Rerum qui qui autem ut quis ut. Praesentium voluptatibus ut dignissimos rerum.', 'https://loremflickr.com/640/480/', '1.45', 'pizzes', 5);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (2, 'eaque', 'Eius voluptatem aliquam et voluptatem odit. Neque officia illo consequuntur aut architecto. Fugiat vero enim amet mollitia voluptate dolor distinctio praesentium.', 'https://loremflickr.com/640/480/', '5.27', 'pizzes', 4);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (3, 'sed', 'Voluptatibus corrupti exercitationem repellat dolorum. Unde sint quae et quae recusandae. Voluptas et sint saepe laboriosam accusantium doloribus. Ipsum voluptas voluptatibus et voluptatum eum. Dolores perspiciatis doloremque amet eveniet.', 'https://loremflickr.com/640/480/', '3.05', 'pizzes', 5);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (4, 'ea', 'Iure quidem omnis eum occaecati rem quae. Aperiam sint voluptatem quod sed saepe et ipsam. Exercitationem fugit et ipsam quasi aut cupiditate. Velit rerum et est blanditiis maxime corporis animi.', 'https://loremflickr.com/640/480/', '12.18', 'pizzes', 4);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (5, 'et', 'Labore veniam quis dolor tempora praesentium sit. Eum molestiae vero quia. Odit odit earum provident et blanditiis. At tempore sequi saepe excepturi molestiae labore expedita animi.', 'https://loremflickr.com/640/480/', '9.64', 'begudes', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (6, 'sed', 'Sit sed voluptates quia velit. Ea ut non architecto non porro atque. Ullam tempora rerum quos ut nostrum dolore. Ratione voluptates est eius iste ipsam.', 'https://loremflickr.com/640/480/', '5.75', 'hamburgueses', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (7, 'vero', 'Eligendi ea excepturi dolores earum libero. Sed occaecati vero qui aut modi quia est. Id ducimus vel consequuntur qui.', 'https://loremflickr.com/640/480/', '8.61', 'hamburgueses', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (8, 'eos', 'Et atque optio nihil esse doloribus veniam. Expedita exercitationem eum culpa maxime. Amet neque repudiandae delectus beatae porro.', 'https://loremflickr.com/640/480/', '2.17', 'hamburgueses', 4);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (9, 'atque', 'Non enim molestiae quidem. Dignissimos vero non nemo et nihil aut minima. Quidem quae nulla sit sint ab ut aliquid id.', 'https://loremflickr.com/640/480/', '1.93', 'begudes', 3);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (10, 'dolor', 'Veritatis odio inventore ipsum labore quam. Aut vel porro aut voluptatem nostrum repudiandae rem. Aut perferendis voluptatum aut libero illo incidunt accusamus voluptas.', 'https://loremflickr.com/640/480/', '11.95', 'hamburgueses', 3);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (11, 'culpa', 'Voluptatem vel recusandae sit dolore tenetur voluptas. Blanditiis numquam facilis sunt perspiciatis aliquid voluptas. Distinctio aut unde vel id nam.', 'https://loremflickr.com/640/480/', '14.06', 'hamburgueses', 3);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (12, 'molestias', 'Velit sit culpa ipsum quo earum est. Consequatur voluptatum dolorem aut voluptates. Odit nam aperiam est et.', 'https://loremflickr.com/640/480/', '14.67', 'pizzes', 3);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (13, 'nihil', 'Repellat nihil minus amet in. Tempore corporis ut accusamus accusamus voluptatem qui. Sint delectus magnam eveniet consectetur est qui quaerat. Est deserunt quis ut quis assumenda nihil et.', 'https://loremflickr.com/640/480/', '12.08', 'pizzes', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (14, 'blanditiis', 'Voluptas saepe possimus quas veniam adipisci et assumenda. Omnis vel amet aut. Sit nisi asperiores molestiae corporis. Officia vel atque aperiam deserunt aut nobis tempora.', 'https://loremflickr.com/640/480/', '7.47', 'hamburgueses', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (15, 'sed', 'Quod dignissimos laboriosam voluptatem ut in. Quae sequi mollitia fugiat ut hic. Et aut qui eligendi fugit.', 'https://loremflickr.com/640/480/', '0.55', 'begudes', 5);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (16, 'consequuntur', 'Veritatis libero vero officia optio accusamus inventore facere perspiciatis. Atque dicta maxime error sunt sit. Omnis animi dolore fugit ex consequatur omnis quos. Ipsam pariatur et id libero dolore.', 'https://loremflickr.com/640/480/', '7.38', 'hamburgueses', 3);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (17, 'quo', 'Inventore necessitatibus labore reiciendis error. Quisquam eum quibusdam nulla est quis. Sit labore id consequuntur voluptate.', 'https://loremflickr.com/640/480/', '1.23', 'pizzes', 4);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (18, 'accusamus', 'Dolorem tempora nobis et. Voluptas hic reprehenderit voluptas quas et nihil ut dolores. Quia quia aliquid quaerat in earum. Maiores accusantium voluptas voluptas et pariatur consequatur.', 'https://loremflickr.com/640/480/', '2.99', 'hamburgueses', 5);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (19, 'ad', 'Eligendi amet et qui. Alias impedit natus expedita dolorem.', 'https://loremflickr.com/640/480/', '9.46', 'hamburgueses', 4);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (20, 'dolor', 'Quia ipsa velit totam quas reiciendis dolorem. Soluta expedita laudantium ut ullam ducimus esse enim. Culpa ex inventore ut odio. Eveniet assumenda voluptate minus tempora reprehenderit.', 'https://loremflickr.com/640/480/', '9.73', 'hamburgueses', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (21, 'unde', 'Illo non tempore quo non autem. Repudiandae cum quo repudiandae soluta nam rerum qui. Libero iusto id qui sed odio dolorem tempore iusto. Illum earum sed totam harum quaerat.', 'https://loremflickr.com/640/480/', '13.51', 'begudes', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (22, 'sed', 'Qui ut rerum excepturi nam ex id. Corrupti amet optio distinctio fugit maxime nulla voluptatibus. Et deleniti sit velit explicabo. Possimus a perspiciatis corporis perspiciatis dolorem aspernatur qui.', 'https://loremflickr.com/640/480/', '1.55', 'begudes', 1);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (23, 'similique', 'Praesentium asperiores in blanditiis possimus at. Officiis quia voluptate non.', 'https://loremflickr.com/640/480/', '8.8', 'pizzes', 2);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (24, 'ea', 'Commodi nostrum quia qui aut voluptatum quisquam. Alias eius non aspernatur recusandae. Corporis corrupti aliquid ipsum earum suscipit et ipsum. Et facilis aut voluptates. Autem iure neque est laboriosam beatae.', 'https://loremflickr.com/640/480/', '9.29', 'pizzes', 2);
+INSERT INTO `producte` (`producte_id`, `nom`, `descripcio`, `imatge`, `preu`, `tipo`, `categoria_pizza_id`) VALUES (25, 'nemo', 'Nulla neque nihil maxime fuga atque tenetur. Rerum debitis velit quam. Quia iure et nulla ut.', 'https://loremflickr.com/640/480/', '7.48', 'pizzes', 2);
+
