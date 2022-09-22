@@ -170,6 +170,7 @@ INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `port
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (3, 'Schumm Inc', 'Glover Ranch', '56', '9', '5', 'West', '81460', 'España', '(451)670-9770x04859', '012-085-3590', 'o59647020');
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (4, 'Daugherty, Bogisich and Brakus', 'Jabari Locks', '326', '3', '', 'Lake', '10140', 'España', '00574722640', '252.525.3117x4929', 'c61647778');
 INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (5, 'Weber, Lynch and Dach', 'Giuseppe Place', '300', '', '9', 'South', '80127-2456', 'España', '02147680285', '1-825-051-0528', 'i02326043');
+INSERT INTO `proveidor` (`proveidor_id`, `nom`, `carrer`, `numero`, `pis`, `porta`, `ciutat`, `codi_postal`, `pais`, `telefono`, `fax`, `nif`) VALUES (6, 'Sunglass', 'Leiva', '11', '', '9', 'Barcelona', '08014', 'España', '62147680233', '6519-0528', 'B02326432');
 
 
 #
@@ -268,3 +269,9 @@ GROUP BY marca_nom;
 
 
 #--- Llista els diferents proveïdors que han subministrat ulleres venudes amb èxit per l'òptica.
+SELECT nom, ROUND(SUM(preu),2) AS 'Total Ventas', COUNT(ulleres_id) AS Num_ventas
+FROM proveidor
+LEFT JOIN marca USING (proveidor_id)
+LEFT JOIN ulleres USING (marca_id)
+GROUP BY nom
+ORDER BY Num_ventas DESC
